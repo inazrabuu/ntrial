@@ -1,0 +1,20 @@
+{
+  "base_url" : "ntrial.app",
+  "app_id" : "7555fcb84a8a8c65ed903f42",
+  "host" : "localhost",
+  "port" : "8010",
+  "db_user" : "",
+  "db_password" : "",
+  "db_host" : "127.0.0.1",
+  "db_port" : "",
+  "db_name" : "ntrial",
+
+  "fb_app_id": "",
+  "fb_app_secret": "",
+
+  "twitter_app_id": "",
+  "twitter_app_secret": "",
+
+  "google_app_id": "",
+  "google_app_secret": ""
+}

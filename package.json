@@ -1,0 +1,33 @@
+{
+  "name": "ntrial",
+  "version": "0.0.1",
+  "description": "Ntrial test assigment",
+  "main": "index.js",
+  "dependencies": {
+    "ejs": "^2.4.1",
+    "express": "^4.13.3",
+    "facebook-node": "0.0.3",
+    "mongoose": "^4.2.7",
+    "mongoose-unique-validator": "^0.6.1"
+  },
+  "devDependencies": {
+    "nodemon": "^1.8.1"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/inazrabuu/ntrial.git"
+  },
+  "keywords": [
+    "Trial"
+  ],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/inazrabuu/ntrial/issues"
+  },
+  "homepage": "https://github.com/inazrabuu/ntrial#readme"
+}
