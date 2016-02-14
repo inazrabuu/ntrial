@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="description" content="" />
+  <meta name="author" content="" />
+  <title>Ntrial Chat</title>
+        
+  <link href="/assets/chat.css" rel="stylesheet" />
+
+</head>
+<body style="font-family:Verdana">
+      <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Ntrial</a>
+        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="/">Home</a></li>
+            <li class="active"><a href="/chat">Chat</a></li>
+            <li><a href="/auth/logout">Sign out</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+  <div class="container">
+    <div class="row " style="padding-top:40px;">
+      <h3 class="text-center" >Ntrial Chat</h3>
+      <br /><br />
+      <div class="col-md-8" id="chat">
+        <div class="panel panel-info">
+          <div class="panel-heading">
+            RECENT CHAT HISTORY
+          </div>
+          <div class="panel-body">
+            <ul class="media-list">
+
+
+            </ul>
+          </div>
+          <div class="panel-footer">
+            <div class="input-group">
+              <input type="text" class="form-control" id="msg" placeholder="Enter Message" />
+              <span class="input-group-btn">
+                <button id="send-msg" class="btn btn-info" type="button">SEND</button>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4" id="user">
+        <div class="panel panel-primary">
+          <div class="panel-heading">
+           USERS
+         </div>
+         <div class="panel-body">
+          <ul class="media-list">
+
+          </ul>
+        </div>
+      </div>
+
+      <input type="hidden" id="user_id" value="<%= user.id %>">
+      <input type="hidden" id="user_name" value="<%= user.name %>">
+      <input type="hidden" id="user_photo" value="<%= user.photo %>">
+
+    </div>
+  </div>
+</div>
+<script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+<script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+<script src="http://momentjs.com/downloads/moment.js"></script>
+<script>
+
+  function createHtmlChat(msg){
+    var created_at = moment(msg.created_at).format('DD MMMM YYYY h:mm:ss a')
+    var text = '\
+      <li class="media">\
+        <div class="media-body">\
+          <div class="media">\
+            <a class="pull-left" href="#">\
+              <img class="media-object img-circle " src="'+msg.cust_photo+'" >\
+            </a>\
+          <div class="media-body" >\
+            '+msg.msg+'\
+            <br />\
+            <small class="text-muted">'+ msg.cust_name +' | ' + created_at +'</small>\
+            <hr />\
+          </div>\
+        </div>\
+      </div>\
+    </li>';
+
+    return text
+  }
+  
+  function createHtmlUser(user){
+    var lastName = (user.last_name != undefined) ? user.last_name : ''
+  
+    var text = '\
+      <li class="media">\
+          <div class="media-body">\
+            <div class="media">\
+              <a class="pull-left" href="#">\
+                <img class="media-object img-circle" style="max-height:40px;" src="'+user.photo+'" />\
+              </a>\
+              <div class="media-body" >\
+                <h5>'+user.first_name + ' ' +lastName + '</h5>\
+                <small class="text-muted"></small>\
+              </div>\
+            </div>\
+          </div>\
+        </li>';
+    return text;
+  }
+
+  $(function() {
+    var socket = io();
+
+    $('#send-msg').click(function(){
+      var payload = {
+        'cust_id': $('#user_id').val(),
+        'cust_name': $('#user_name').val(),
+        'cust_photo': $('#user_photo').val(),
+        'msg': $('#msg').val()
+      }
+      socket.emit('chat message', payload);
+      $('#msg').val('');
+      return false;
+    });
+
+    socket.on('chat message', function(msg){
+      var message = createHtmlChat(msg)
+      $('#chat .media-list').append(message);
+    });
+
+    $('#msg').keypress(function (e) {
+      var key = e.which;
+      if(key == 13) {
+        $('#send-msg').click()
+        return false;  
+      }
+    });  
+
+    //first load
+    //user
+    $.ajax({
+      url: '/chat/customer',
+      dataType: 'json',
+      error: function(err){
+        alert('An error occured')
+      },
+      success: function(res){
+        var customerHtml = '';
+        for(var i in res){
+          customerHtml += createHtmlUser(res[i])
+        }
+        $('#user .media-list').html(customerHtml)
+      }
+    })
+
+    //history
+    $.ajax({
+      url: '/chat/history',
+      dataType: 'json',
+      error: function(err){
+        alert('An error occured')
+      },
+      success: function(res){
+        var chatHtml = '';
+        for(var i in res){
+          chatHtml += createHtmlChat(res[i])
+        }
+        $('#chat .media-list').html(chatHtml)
+      }
+    })
+  })
+
+</script>
+</body>
+</html>

@@ -11,9 +11,11 @@
 
   "fb_app_id": "",
   "fb_app_secret": "",
+  "fb_callback": "",
 
-  "twitter_app_id": "",
-  "twitter_app_secret": "",
+  "twitter_cons_key": "",
+  "twitter_cons_secret": "",
+  "twitter_callback": "",
 
   "google_app_id": "",
   "google_app_secret": ""

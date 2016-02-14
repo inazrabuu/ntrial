@@ -1,4 +1,3 @@
-
 var config = require('./config')
 
 var mongoose = require('mongoose'),
@@ -11,15 +10,20 @@ db.once('open', function (callback) {
      console.log('connection success');
 });
 
-var customer = function(){
+var Schem = function(){
+
+}
+
+Schem.prototype.customer = function(){
   var customerSchema = Schema({
-    id:Number,
+    id:String,
     email: String,
     type: String,
     access_token:String,
+    access_secret:String,
     first_name: String, 
     last_name: String,
-    gender: Boolean,
+    gender: String,
     bio: String,
     location: {
       lat: Number,
@@ -30,3 +34,16 @@ var customer = function(){
 
   return customerSchema;
 }
+
+Schem.prototype.chat = function(){
+  var chatSchema = Schema({
+    cust_id: String,
+    cust_name: String,
+    cust_photo: String,
+    msg: String,
+  },{ timestamps: { createdAt: 'created_at',  updatedAt: 'updated_at'} });
+
+  return chatSchema;
+}
+
+module.exports = new Schem();
