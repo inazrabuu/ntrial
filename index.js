@@ -35,6 +35,7 @@ app.use(express.static('public'));
 app.use('/auth', require('./server/front_auth'));
 app.use('/', require('./server/front_index'));
 app.use('/chat', require('./server/front_chat'));
+app.use('/admin', require('./server/admin'));
 
 app.set('view engine', 'ejs')
 
@@ -43,6 +44,35 @@ var server = http.createServer(app);
 var io = require('socket.io')(server);
 var ChatModel = require('./chat_model')
 var chat = new ChatModel()
+
+var Account = require('./Account')
+
+function getFeed(payload, fn){
+  var account = new Account(payload.type)
+
+  console.log(payload)
+  
+  account.setAccessToken(payload.access_token)
+  account.setAccessSecret(payload.access_secret)
+
+  var param;
+
+  if (payload.type == 'twitter') {
+    param = {
+      user_id :parseInt(payload.user_id),
+      screen_name :payload.screen_name,
+      since_id: payload.since_id
+    }
+  } else if (payload.type == 'facebook') {
+    param = {
+      since: payload.since
+    }
+  }
+
+  account.getFeed(param, function(err, doc){
+    fn(err, doc)
+  })
+}
 
 io.on('connection', function(socket){
   socket.on('chat message', function(msg){
@@ -60,6 +90,13 @@ io.on('connection', function(socket){
 
       io.emit('chat message', data);
     })
+  });
+
+  socket.on('feed', function(msg){
+    getFeed(msg, function(err, doc){
+      io.emit('feed', doc);
+    })
+    
   });
 });
 

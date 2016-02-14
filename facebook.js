@@ -53,10 +53,15 @@ Facebook.prototype.getProfile = function(fn){
   });
 }
 
-Facebook.prototype.getFeed = function(fn){
+Facebook.prototype.getFeed = function(param, fn){
   var self = this;
   FB.setAccessToken(this.accessToken);
-  FB.api('me/feed', function (res) {
+
+  if (param == undefined || param == null) {
+    param = {}
+  }
+
+  FB.api('me/feed', param, function (res) {
     if(!res || res.error) return fn(res.error);
     
     fn(null, res); 

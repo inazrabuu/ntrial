@@ -21,6 +21,7 @@ Schem.prototype.customer = function(){
     type: String,
     access_token:String,
     access_secret:String,
+    username:String,
     first_name: String, 
     last_name: String,
     gender: String,

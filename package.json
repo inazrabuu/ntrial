@@ -10,6 +10,7 @@
     "express": "^4.13.3",
     "express-session": "^1.13.0",
     "facebook-node": "0.0.3",
+    "googleapis": "^2.1.7",
     "moment": "^2.11.2",
     "mongoose": "^4.2.7",
     "mongoose-unique-validator": "^0.6.1",

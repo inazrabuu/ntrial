@@ -68,10 +68,10 @@ Twitter.prototype.getProfile = function(fn){
                 
 }
 
-Twitter.prototype.getFeed = function(fn){
+Twitter.prototype.getFeed = function(param, fn){
   var self = this;
 
-  twitter.getTimeline('home', {count:100}, self.accessToken, self.accessSecret, function(err, doc) {
+  twitter.getTimeline('user', param, self.accessToken, self.accessSecret, function(err, doc) {
     if (err) return fn(err)
 
     fn(null, doc)

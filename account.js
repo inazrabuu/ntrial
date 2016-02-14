@@ -3,6 +3,9 @@
 var config = require('./config')
 var Facebook = require('./facebook');
 var Twitter = require('./twitter');
+var Google = require('./google');
+
+var moment = require('moment')
 
 var Social = function(type){
   this.type = type
@@ -22,6 +25,7 @@ var Social = function(type){
       break;
 
     case 'google':
+      object = new Google()
       break;
   }
 
@@ -74,7 +78,7 @@ Social.prototype.getProfile = function(fn) {
   })
 }
 
-Social.prototype.getFeed = function(fn) {
+Social.prototype.getFeed = function(param, fn) {
   var self = this;
 
   var obj = self.object;
@@ -82,8 +86,10 @@ Social.prototype.getFeed = function(fn) {
   obj.setAccessToken(self.accessToken)
   obj.setAccessSecret(self.accessSecret)
 
-  obj.getFeed(function(err, doc){
+  obj.getFeed(param, function(err, doc){
     if(err) return fn(err)
+
+    console.log(doc)
 
     return fn(null, feedItems(self.type, doc))
   })
@@ -94,12 +100,16 @@ function feedItems(type, doc){
 
   switch (type){
     case 'facebook':
-      for(var i in doc.data){
-        items.push({
-          id: doc.data[i].id,
-          message: doc.data[i].message,
-          picture: doc.data[i].picture
-        })
+      if(doc.data.length > 0) {
+        for(var i in doc.data){
+          items.push({
+            id: doc.data[i].id,
+            message: doc.data[i].message,
+            picture: doc.data[i].picture,
+            created_at: moment(doc.data[i].created_time).format('DD MMMM YYYY h:mm a'),
+            timestamp: moment(doc.data[i].created_time).valueOf() / 1000
+          })
+        }
       }
         
       break;
@@ -108,13 +118,24 @@ function feedItems(type, doc){
       for(var i in doc){
         items.push({
           id: doc[i].id,
-          message: doc[i].text
-          //picture: doc[i].extended_entities.media.media_url
+          message: doc[i].text,
+          //picture: (doc[i].extended_entities.media.media_url != undefined) ? doc[i].extended_entities.media.media_url : null,
+          created_at: moment(doc[i].created_at).format('DD MMMM YYYY h:mm a'),
+          timestamp: moment(doc[i].created_at).valueOf() / 1000
         })
       }
       break;
 
     case 'google':
+      for(var i in doc.data){
+          items.push({
+            id: doc.data[i].id,
+            message: doc.data[i].message,
+            picture: doc.data[i].picture,
+            created_at: moment(doc.data[i].created_time).format('DD MMMM YYYYY h:mm a'),
+            timestamp: moment(doc.data[i].created_time).valueOf() / 1000
+          })
+        }
       break;
   }
 

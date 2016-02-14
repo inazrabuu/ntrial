@@ -56,6 +56,7 @@ router.get('/callback', function(req, res){
 
       if (type=='twitter') {
         payload.id = user.id_str;
+        payload.username = user.screen_name
         payload.first_name = user.name
         payload.photo = user.profile_image_url
         payload.bio = user.description

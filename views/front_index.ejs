@@ -47,15 +47,33 @@
     </nav>
 
     <div class="container">
+      <input type="hidden" id="user-type" value="<%= user.type %>">
+      <input type="hidden" id="user-access-token" value="<%= user.access_token %>">
+      <input type="hidden" id="user-access-secret" value="<%= user.access_secret %>">
+      <input type="hidden" id="user-id" value="<%= user.id %>">
+      <input type="hidden" id="user-screen_name" value="<%= user.screen_name %>">
 
-      <div class="starter-template">
+      <div class="starter-template" >
         <h1>Ntrial Feed</h1>
-        <% for(var i in data) { %>
-          <p class="lead"><%= data[i].message %></p>
-          <% if (data[i].picture) { %>
-             <img src="<%= data[i].picture %>">'
+        <div id="feed-container">
+          <% for(var i in data) { %>
+            <% var u = '' %>
+            <% if(i < 1) { %>
+              <% u = i %>
+            <% } %>
+            <div class="feed" id="feed-index_<%= u %>" >
+              <div style="display:none" id="feed-id_<%= u %>"><%= data[i].id %></div>
+              
+              <p class="lead"><%= data[i].message %></p>
+              <% if (data[i].picture) { %>
+                 <img src="<%= data[i].picture %>">'
+              <% } %>
+              <div><%= data[i].created_at %></div>
+              <div style="display:none" id="timestamp_<%= u %>" ><%= data[i].timestamp %></div>
+            </div>
+            <br />
           <% } %>
-        <% } %>
+        </div>
         
       </div>
 
@@ -66,6 +84,77 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous">
+    </script>
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="http://code.jquery.com/jquery-1.11.1.js"></script>
+
+    <script>
+
+      function createHtmlFeed(data){
+        var newHtml = ''
+
+        for(var i in data){
+
+          var img = '';
+          if (data[i].picture) {
+            img = '<img src="'+data[i].picture+'">'
+          }
+
+          var text = '\
+            <div class="feed" id="feed-index_0" >\
+              <div style="display:none" id="feed-id_0">'+data[i].id+'</div>\
+              <p class="lead">'+ data[i].message +'</p>\
+              '+img+'\
+              <div>'+data[i].created_at +'</div>\
+              <div style="display:none"  id="timestamp_0" >'+ data[i].timestamp +'</div>\
+            </div>'
+
+          newHtml += text
+        }
+
+        return newHtml
+      }
+
+      $(function() {
+
+        var socket = io();
+
+        setInterval(function(){ 
+          var payload = {
+            type: $('#user-type').val(),
+            access_token: $('#user-access-token').val(),
+            access_secret: $('#user-access-secret').val(),
+            user_id: $('#user-id'),
+            screen_name: $('#screen_name'),
+
+            since_id: parseInt($('#feed-id_0').text()),
+            since: parseInt($('#timestamp_0').text())
+          }
+
+          socket.emit('feed', payload);
+
+          socket.on('feed', function(msg){
+            console.log(msg)
+
+            var condition;
+            if (payload.type == 'twitter') {
+              condition = msg && msg.length > 0 && parseInt(msg[0].id) != parseInt($('#feed-id_0').text())
+            } else if (payload.type == 'facebook') {
+              condition = msg && msg.length > 0
+            }
+
+            if(condition) {
+              $('#feed-id_0').removeAttr('id')
+              $('#feed-index_0').removeAttr('id')
+              $('#timestamp_0').removeAttr('id')
+
+              $('#feed-container').prepend(createHtmlFeed(msg))
+            }
+          })
+        }, 10000);
+          
+      });
+    </script>
   </body>
 </html>
