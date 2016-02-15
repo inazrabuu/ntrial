@@ -45,7 +45,7 @@ var io = require('socket.io')(server);
 var ChatModel = require('./chat_model')
 var chat = new ChatModel()
 
-var Account = require('./Account')
+var Account = require('./account')
 
 function getFeed(payload, fn){
   var account = new Account(payload.type)
