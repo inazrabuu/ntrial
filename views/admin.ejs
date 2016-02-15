@@ -1,0 +1,203 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>Dashboard Template for Bootstrap</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="http://getbootstrap.com/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="http://getbootstrap.com/examples/dashboard/dashboard.css" rel="stylesheet">
+  </head>
+
+  <body>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Ntrial Control Panel</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">Dashboard</a></li>
+            <li><a href="/">Front End</a></li>
+          </ul>
+          <form class="navbar-form navbar-right">
+            <input type="text" class="form-control" placeholder="Search...">
+          </form>
+        </div>
+      </div>
+    </nav>
+
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar">
+          <ul class="nav nav-sidebar">
+            <li class="active"><a href="#">Customer <span class="sr-only">(current)</span></a></li>
+          </ul>
+        </div>
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h2 class="sub-header">Customer</h2>
+          <div class="table-responsive">
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th>id</th>
+                  <th>Photo</th>
+                  <th>Type</th>
+                  <th>Email</th>
+                  <th>Username</th>
+                  <th>First - Last name</th>
+                  <th>Gender</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% for(var i in data) { %>
+                <% var lastName = data[i].last_name  ? data[i].last_name : '' %>
+                <tr id="tr<%= data[i].id %>">
+                  <td><%= data[i].id %></td>
+                  <td><img src="<%= data[i].photo %>"></td>
+                  <td><%= data[i].type %></td>
+                  <td><%= data[i].email %></td>
+                  <td><%= data[i].username %></td>
+                  <td><%= data[i].first_name + ' ' + lastName %></td>
+                  <td><%= data[i].gender %></td>
+                  <td>
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal<%= data[i].id %>" data-whatever="@mdo">Edit</button>
+                    <button type="button" class="btn btn-danger" onclick="del(<%= data[i].id %>)">Delete</button>
+
+                    <div class="modal fade" id="exampleModal<%= data[i].id %>" tabindex="-1" data-id="<%= data[i].id %>" role="dialog" aria-labelledby="exampleModalLabel">
+                      <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h4 class="modal-title" id="exampleModalLabel">Edit Customer</h4>
+                          </div>
+                          <div class="modal-body">
+                            <form class="update-customer" id="update-customer<%= data[i].id %>">
+                              <input type="hidden" name="id" value="<%= data[i].id %>">
+                              <div class="form-group">
+                                <label for="recipient-name" class="control-label">Type</label>
+                                <input type="text" class="form-control" name="type" value="<%= data[i].type %>" readonly>
+                              </div>
+                              <div class="form-group">
+                                <label for="recipient-name" class="control-label">Email</label>
+                                <input type="text" class="form-control" name="email" value="<%= data[i].email %>">
+                              </div>
+                              <div class="form-group">
+                                <label for="recipient-name" class="control-label">Username</label>
+                                <input type="text" class="form-control" name="username" value="<%= data[i].username %>">
+                              </div>
+                              <div class="form-group">
+                                <label for="recipient-name" class="control-label">First Name</label>
+                                <input type="text" class="form-control" name="first_name" value="<%= data[i].first_name %>">
+                              </div>
+                              <div class="form-group">
+                                <label for="recipient-name" class="control-label">Last Name</label>
+                                <input type="text" class="form-control" name="last_name" value="<%= data[i].last_name %>">
+                              </div>
+                              <div class="form-group">
+                                <label for="recipient-name" class="control-label">Gender</label><br>
+                                <label class="radio-inline">
+                                  <input type="radio" name="gender" id="inlineRadio1" value="male" <%= (data[i].gender=='male') ? 'checked' : '' %>> Male
+                                </label>
+                                <label class="radio-inline">
+                                  <input type="radio" name="gender" id="inlineRadio2" value="female" <%= (data[i].gender=='female') ? 'checked' : '' %>> Female
+                                </label>
+                              </div>
+                              <div class="form-group">
+                                <label for="message-text" class="control-label">Bio</label>
+                                <textarea class="form-control" name="bio" id="message-text"><%= data[i].bio %></textarea>
+                              </div>
+                            </form>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-primary" id="btn-update<%= data[i].id %>" class="update">Update</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+                <% } %>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="http://getbootstrap.com/dist/js/bootstrap.min.js"></script>
+    <script src="http://cdn.jsdelivr.net/jquery.validation/1.14.0/jquery.validate.min.js"></script>
+    <script>
+
+      function del(id){
+        var r = confirm("Are you sure you want to delete?");
+        if (!r == true) {
+          return false  
+        } 
+
+        $.ajax({
+          url: '/admin/customer/'+id,
+          type: 'DELETE',
+          success: function(res){
+            $('#exampleModal'+id).modal('hide')
+            $('#tr'+id).remove()  
+          },
+          error: function(err){
+            alert('an error occured')
+          }
+        })
+      }
+
+      $(function(){
+
+
+        $('.modal').each(function(index){
+          var modal = $(this)
+          var id = modal.data('id')
+
+          $(document).on('click', '#btn-update'+id, function(event){
+            var formData = modal.find('.modal-body form').serialize();
+            
+            $.ajax({
+              url: '/admin/customer',
+              type: 'PUT',
+              data:formData,
+              error: function(err){
+                alert('an error occured')
+              },
+              success: function(res){
+                $('#exampleModal'+id).modal('hide')
+                window.location.assign('/admin/customer')   
+              }
+            })
+
+          })
+
+        })
+      
+      })
+    </script>
+  </body>
+</html>

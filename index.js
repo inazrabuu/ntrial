@@ -20,7 +20,7 @@ app.use(session({
 }));
 
 function restrict(req, res, next) {
-  if (req.session.user || req.url === '/auth/login') {
+  if (req.session.user || req.url === '/auth/login' || (req.url.match(/admin/g) && req.url.match(/admin/g).length >0)) {
     next();
   } else {
     req.session.error = 'Access denied!';

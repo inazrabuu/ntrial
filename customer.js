@@ -63,4 +63,17 @@ Customer.prototype.sync = function(payload, fn){
   })
 }
 
+Customer.prototype.delete = function(id, fn){
+  var self = this
+
+  this.findOne({id:id}, function(err, doc){
+    if(err) return fn(err)
+
+    customerModel.remove({id:id}, function(err, doc){
+      return fn(doc)
+    })
+  })
+
+}
+
 module.exports = Customer
